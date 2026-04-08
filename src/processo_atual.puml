@@ -1,1 +1,48 @@
+@startuml
+title Processo de Cobrança Atual (As-Is)
 
+start
+:Receber e inserir título no sistema;
+
+fork
+    :Emitir 1ª carta de cobrança;
+fork again
+    :Tentar contato telefônico;
+end fork
+
+if (Houve retorno ou contato?) then (sim)
+    :Iniciar Negociação;
+    if (Houve acordo e pagamento?) then (sim)
+        :Transferir valores para contratante;
+        stop
+    else (não)
+        label Protesto
+        :Protestar título;
+        if (Título pago após protesto?) then (sim)
+            :Transferir valores para contratante;
+        else (não)
+            :Devolver título;
+        endif
+        stop
+    endif
+else (não)
+    :Enviar 2ª carta de cobrança;
+    if (Sem retorno da 2ª carta e sem sucesso no telefone?) then (sim)
+        :Acionar cobrador externo;
+        if (Devedor localizado e quer negociar?) then (sim)
+            :Iniciar Negociação;
+            if (Pagamento realizado?) then (sim)
+                :Transferir valores para contratante;
+                stop
+            else (não)
+                goto Protesto
+            endif
+        else (não)
+            goto Protesto
+        endif
+    else (retorno da 2ª carta)
+        :Iniciar Negociação;
+        stop
+    endif
+endif
+@enduml
