@@ -1,0 +1,51 @@
+@startuml
+title Processo de Cobrança Otimizado (To-Be)
+
+start
+:Receber e inserir título no sistema;
+
+partition "Fase Digital (Baixo Custo)" {
+    :Enviar notificações automáticas (WhatsApp/E-mail/SMS);
+    note right: Link para pagamento imediato (PIX/Boleto)
+}
+
+if (Pagamento realizado via Portal?) then (sim)
+    :Baixa automática e transferência;
+    stop
+else (não)
+    fork
+        :Emitir 1ª carta de cobrança;
+    fork again
+        :Call Center (Foco em casos críticos);
+    end fork
+endif
+
+if (Houve negociação?) then (sim)
+    :Gerar Acordo Digital;
+    if (Pagamento confirmado?) then (sim)
+        :Transferir valores para contratante;
+        stop
+    else (não)
+        label Protesto
+        :Protestar título (Via sistema);
+        if (Pago pós-protesto?) then (sim)
+            :Transferir valores;
+        else (não)
+            :Devolver título;
+        endif
+        stop
+    endif
+else (não)
+    :Análise de Viabilidade do Cobrador;
+    if (Valor da dívida justifica custo de deslocamento?) then (sim)
+        :Acionar cobrador externo;
+        if (Sucesso na localização?) then (sim)
+            goto Protesto
+        else (não)
+            goto Protesto
+        endif
+    else (não)
+        goto Protesto
+    endif
+endif
+@enduml
